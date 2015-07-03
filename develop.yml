@@ -5,8 +5,9 @@ influxdb:
   ports:
     - "8083:8083"
     - "8086:8086"
+    - "2003:2003"
   environment:
-    PRE_CREATE_DB: "collectd;statsd"
+    PRE_CREATE_DB: "metrics"
 
 grafana:
   image: grafana/grafana:latest
@@ -14,6 +15,25 @@ grafana:
     - "3000:3000"
   links:
     - influxdb
+
+#telegraf:
+#  image: alvaromorales/telegraf:latest
+#  links:
+#    - influxdb
+#  environment:
+#    DB_NAME: telegraf
+
+#diamond:
+#  image: lesaux/diamond-containercollector
+#  links:
+#    - influxdb
+#  volumes:
+#    - /proc:/host_proc:ro
+#    - /var/run/docker.sock:/var/run/docker.sock:ro
+#  environment:
+#    GRAPHITE_HOST: influxdb
+#    DOCKER_HOSTNAME: jtdev
+#    INTERVAL: 5
 
 collectd:
   image: andreasjansson/collectd-write-graphite
@@ -25,10 +45,20 @@ collectd:
     HOST_NAME: jtdev
     INFLUXDB_HOST: influxdb
 
-#statsd:
-#  image: shakr/statsd-influxdb
-#  links:
-#    - influxdb
-#  environment:
-#    INFLUXDB_HOST: influxdb
-#    INFLUXDB_DATABASE: statsd
+statsd:
+  image: shakr/statsd-influxdb
+  links:
+    - influxdb
+  ports:
+    - "8125:8125/udp"
+  environment:
+    INFLUXDB_HOST: influxdb
+    INFLUXDB_DATABASE: metrics
+    STATSD_DEBUG: true
+
+generator:
+  build: ./generator/
+  links:
+    - statsd
+  environment:
+    PYTHONUNBUFFERED: 1

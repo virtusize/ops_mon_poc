@@ -10,6 +10,9 @@ https://devops.profitbricks.com/tutorials/creating-a-grafana-and-influxdb-docker
 OPS NOTES
 
 Collection
+- Collectd
+  Has output to influxdb native & graphite.
+
 - StatsD - Aggregator
 
 - CloudWatch metrics ?
@@ -17,7 +20,12 @@ Collection
 
 Storage
 - InfluxDB 0.8
+  Has a graphite and collectd plugin.
+  Collectd plugin has a not grafana compatible metric naming ("/" instead of ".")
+  Graphite plugin works fine.
 
+
+Other options:
 - Graphite
 - Graphite hosted
 - Librato

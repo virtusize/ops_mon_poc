@@ -35,11 +35,11 @@ read-timeout = "5s"
   # port = 4444
   # database = ""
 
-  [input_plugins.collectd]
+  [input_plugins.graphite]
   enabled = true
-  port = 8096
-  database = "collectd"
-  typesdb = "/config/collectd_types.db"
+  port = 2003
+  database = "metrics"  # store graphite data in this database
+  udp_enabled = true # enable udp interface on the same port as the tcp interface
 
 # Raft configuration
 [raft]
